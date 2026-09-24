@@ -1,5 +1,6 @@
 pipeline{
-    agent any 
+    agent any
+    
     stages{
         stage("Code"){
             steps{
@@ -8,30 +9,30 @@ pipeline{
         }
         stage("Build"){
             steps{
-                sh 'docker build -t sarthu/sarthaksinghal .'
+                sh "docker build -t sarthu/flasksarthuapp ."
             }
         }
         stage("Test"){
             steps{
-                sh 'test cases'
+                echo "testing"
             }
         }
-        stage("Docker hub"){
+        stage("Docker Hub"){
             steps{
                 withCredentials([usernamePassword(
-                    credentialsId:"dockerhubsarthak",
-                    usernameVariable:"dockerhubusername",
+                    credentialsId:"dockerhubrepo",
+                    usernameVariable:"dockerhubuser",
                     passwordVariable:"dockerhubpassword"
                     )]){
-                sh 'docker login -u $dockerhubusername -p $dockerhubpassword'
-                sh 'docker image tag sarthu/sarthaksinghal $dockerhubusername/sarthakunion '
-                sh 'docker push $dockerhubusername/sarthakunion'
-                }
+                        sh 'docker login -u $dockerhubuser -p $dockerhubpassword'
+                        sh 'docker image tag sarthu/flasksarthuapp $dockerhubuser/flask-app'
+                        sh 'docker push $dockerhubuser/flask-app'
+                    }
             }
         }
         stage("Deploy"){
             steps{
-                sh 'docker compose up -d '
+                sh "docker compose up -d"
             }
         }
     }
